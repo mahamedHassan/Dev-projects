@@ -1,0 +1,56 @@
+//slideshow cintainer
+.slideshow-container{
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+
+}
+//my slides
+.myslides1, .myslides2, .myslides3{
+    display: none;
+  
+    &-photo1{
+      
+
+    }
+
+
+    &-photo2{
+        
+        
+    }
+
+    &-photo3{
+       
+
+    }
+}
+img{vertical-align: middle;}
+
+//next & previous bottons
+.prev, .next{
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: $color-white;
+    font-weight: bold;
+    font-size: $default-font-size;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    //On hover, add a grey bacground color
+   &:hover{ 
+    background-color: $color-grey-dark;
+    color: $color-black;
+}
+   
+}
+//position the "next button" to the right
+.next{
+    right: 0;
+    border-radius: 3px 0 0 3px;
+
+}

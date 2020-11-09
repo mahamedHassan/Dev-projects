@@ -1,0 +1,336 @@
+/ Fig. 11.9: PayrollSystemTest.cs
+// Employee hierarchy test application.
+using System;
+
+public class PayrollSystemTest
+{
+public static void Main( string[] args )
+{
+// create derived class objects
+SalariedEmployee salariedEmployee =
+new SalariedEmployee("John", "Smith", "111-11-1111", "03/10/2002", 800.00M);
+HourlyEmployee hourlyEmployee =
+new HourlyEmployee( "Karen", "Price",
+"222-22-2222","05/10/2000", 16.75M, 40.0M );
+CommissionEmployee commissionEmployee =
+new CommissionEmployee( "Sue", "Jones",
+"333-33-3333", "11/10/2005", 10000.00M, .06M);
+BasePlusCommissionEmployee basePlusCommissionEmployee =
+new BasePlusCommissionEmployee( "Bob", "Lewis",
+"444-44-4444", "05/01/2009",5000.00M, .04M, 300.00M );
+
+SalariedEmployee salariedEmployee2 =
+new SalariedEmployee("Ken", "Smith", "555-55-5555", "03/10/2002", 400.00M);
+HourlyEmployee hourlyEmployee2 =
+new HourlyEmployee("Karen", "Jones",
+"666-66-6666", "05/10/2000", 12.75M, 40.0M);
+CommissionEmployee commissionEmployee2 =
+new CommissionEmployee("Robert", "Jones",
+"777-77-7777", "11/10/2005", 10000.00M, .06M);
+BasePlusCommissionEmployee basePlusCommissionEmployee2 =
+new BasePlusCommissionEmployee("Jessi", "Lewis",
+"888-88-8888", "11/01/2009", 1000.00M, .02M, 100.00M);
+
+Console.WriteLine( "Employees processed individually:\n" );
+
+Console.WriteLine( "{0}\n{1}: {2:C}\n",
+salariedEmployee, "earned", salariedEmployee.Earnings() );
+Console.WriteLine( "{0}\n{1}: {2:C}\n",
+hourlyEmployee, "earned", hourlyEmployee.Earnings() );
+Console.WriteLine( "{0}\n{1}: {2:C}\n",
+commissionEmployee, "earned", commissionEmployee.Earnings() );
+Console.WriteLine( "{0}\n{1}: {2:C}\n",
+basePlusCommissionEmployee,
+"earned", basePlusCommissionEmployee.Earnings() );
+
+// create four-element Employee array
+Employee[] employees = new Employee[ 8 ];
+
+// initialize array with Employees of derived types
+employees[ 0 ] = salariedEmployee;
+employees[ 2 ] = hourlyEmployee;
+employees[ 4 ] = commissionEmployee;
+employees[ 6 ] = basePlusCommissionEmployee;
+employees[1] = salariedEmployee2;
+employees[3] = hourlyEmployee2;
+employees[5] = commissionEmployee2;
+employees[7] = basePlusCommissionEmployee2;
+Console.WriteLine( "Employees processed polymorphically:\n" );
+
+// generically process each element in array employees
+foreach ( Employee currentEmployee in employees )
+{
+Console.WriteLine( currentEmployee ); // invokes ToString
+
+// determine whether element is a BasePlusCommissionEmployee
+if ( currentEmployee is BasePlusCommissionEmployee )
+{
+// downcast Employee reference to
+// BasePlusCommissionEmployee reference
+BasePlusCommissionEmployee employee =
+( BasePlusCommissionEmployee ) currentEmployee;
+
+employee.BaseSalary *= 1.10M;
+Console.WriteLine(
+"new base salary with 10% increase is: {0:C}",
+employee.BaseSalary );
+} // end if
+
+Console.WriteLine(
+"earned {0:C}\n", currentEmployee.Earnings() );
+} // end foreach
+
+// get type name of each object in employees array
+for ( int j = 0; j < employees.Length; j++ )
+Console.WriteLine( "Employee {0} is a {1}", j,
+employees[ j ].GetType() );
+} // end Main
+} // end class PayrollSystemTest
+
+
+=======================
+// Fig. 11.8: BasePlusCommissionEmployee.cs
+// BasePlusCommissionEmployee class that extends CommissionEmployee.
+public class BasePlusCommissionEmployee : CommissionEmployee
+{
+private decimal baseSalary; // base salary per week
+
+// six-parameter constructor
+public BasePlusCommissionEmployee( string first, string last,
+string ssn, string hired, decimal sales, decimal rate, decimal salary )
+: base( first, last, ssn, hired,sales, rate )
+{
+BaseSalary = salary; // validate base salary via property
+} // end six-parameter BasePlusCommissionEmployee constructor
+
+// property that gets and sets
+// base-salaried commission employee's base salary
+public decimal BaseSalary
+{
+get
+{
+return baseSalary;
+} // end get
+set
+{
+baseSalary = ( value >= 0 ) ? value : 0; // validation
+} // end set
+} // end property BaseSalary
+
+// calculate earnings; override method Earnings in CommissionEmployee
+public override decimal Earnings()
+{
+return BaseSalary + base.Earnings();
+} // end method Earnings
+
+// return string representation of BasePlusCommissionEmployee object
+public override string ToString()
+{
+return string.Format( "{0} {1}; {2}: {3:C}",
+"base-salaried", base.ToString(), "base salary", BaseSalary );
+} // end method ToString
+} // end class BasePlusCommissionEmployee
+
+
+===========================
+// Fig. 11.7: CommissionEmployee.cs
+// CommissionEmployee class that extends Employee.
+public class CommissionEmployee : Employee
+{
+private decimal grossSales; // gross weekly sales
+private decimal commissionRate; // commission percentage
+
+// five-parameter constructor
+public CommissionEmployee( string first, string last, string ssn, string hired,
+decimal sales, decimal rate ) : base( first, last, ssn, hired )
+{
+GrossSales = sales; // validate gross sales via property
+CommissionRate = rate; // validate commission rate via property
+} // end five-parameter CommissionEmployee constructor
+
+// property that gets and sets commission employee's commission rate
+public decimal CommissionRate
+{
+get
+{
+return commissionRate;
+} // end get
+set
+{
+commissionRate = ( value > 0 && value < 1 ) ?
+value : 0; // validation
+} // end set
+} // end property CommissionRate
+
+// property that gets and sets commission employee's gross sales
+public decimal GrossSales
+{
+get
+{
+return grossSales;
+} // end get
+set
+{
+grossSales = ( value >= 0 ) ? value : 0; // validation
+} // end set
+} // end property GrossSales
+// calculate earnings; override abstract method Earnings in Employee
+public override decimal Earnings()
+{
+return CommissionRate * GrossSales;
+} // end method Earnings
+
+// return string representation of CommissionEmployee object
+public override string ToString()
+{
+return string.Format( "{0}: {1}\n{2}: {3:C}\n{4}: {5:F2}",
+"commission employee", base.ToString(),
+"gross sales", GrossSales, "commission rate", CommissionRate );
+} // end method ToString
+} // end class CommissionEmployee
+=============================
+// Fig. 11.4: Employee.cs
+// Employee abstract base class.
+public abstract class Employee
+{
+private string firstName;
+private string lastName;
+private string socialSecurityNumber;
+private string dateofHired;
+// three-parameter constructor
+public Employee( string first, string last, string ssn,string hired )
+{
+firstName = first;
+lastName = last;
+socialSecurityNumber = ssn;
+dateofHired = hired;
+} // end three-parameter Employee constructor
+
+// read-only property that gets employee's first name
+public string FirstName
+{
+get
+{
+return firstName;
+} // end get
+} // end property FirstName
+
+// read-only property that gets employee's last name
+public string LastName
+{
+get
+{
+return lastName;
+} // end get
+} // end property LastName
+
+// read-only property that gets employee's social security number
+public string SocialSecurityNumber
+{
+get
+{
+return socialSecurityNumber;
+} // end get
+} // end property SocialSecurityNumber
+public string DateofHired
+{
+get
+{
+return dateofHired;
+} // end get
+} // end property SocialSecurityNumber
+// return string representation of Employee object, using properties
+public override string ToString()
+{
+return string.Format( "{0} {1}\nsocial security number: {2}\nDate of Hired: {3}",
+FirstName, LastName, SocialSecurityNumber,DateofHired);
+} // end method ToString
+
+// abstract method overridden by derived classes
+public abstract decimal Earnings(); // no implementation here
+} // end abstract class Employee
+==============================================
+
+// Fig. 11.5: SalariedEmployee.cs
+// SalariedEmployee class that extends Employee.
+public class SalariedEmployee : Employee
+{
+private decimal weeklySalary;
+
+// four-parameter constructor
+public SalariedEmployee( string first, string last, string ssn, string hired,
+decimal salary ) : base( first, last, ssn, hired )
+{
+WeeklySalary = salary; // validate salary via property
+} // end four-parameter SalariedEmployee constructor
+
+// property that gets and sets salaried employee's salary
+public decimal WeeklySalary
+{
+get
+{
+return weeklySalary;
+} // end get
+set
+{
+weeklySalary = ( ( value >= 0 ) ? value : 0 ); // validation
+} // end set
+} // end property WeeklySalary
+
+// calculate earnings; override abstract method Earnings in Employee
+public override decimal Earnings()
+{
+return WeeklySalary;
+} // end method Earnings
+
+// return string representation of SalariedEmployee object
+public override string ToString()
+{
+return string.Format( "salaried employee: {0}\n{1}: {2:C}",
+base.ToString(), "weekly salary", WeeklySalary );
+} // end method ToString
+} // end class SalariedEmployee
+
+// Fig. 11.5: SalariedEmployee.cs
+// SalariedEmployee class that extends Employee.
+public class SalariedEmployee : Employee
+{
+private decimal weeklySalary;
+
+// four-parameter constructor
+public SalariedEmployee( string first, string last, string ssn, string hired,
+decimal salary ) : base( first, last, ssn, hired )
+{
+WeeklySalary = salary; // validate salary via property
+} // end four-parameter SalariedEmployee constructor
+
+// property that gets and sets salaried employee's salary
+public decimal WeeklySalary
+{
+get
+{
+return weeklySalary;
+} // end get
+set
+{
+weeklySalary = ( ( value >= 0 ) ? value : 0 ); // validation
+} // end set
+} // end property WeeklySalary
+
+// calculate earnings; override abstract method Earnings in Employee
+public override decimal Earnings()
+{
+return WeeklySalary;
+} // end method Earnings
+
+// return string representation of SalariedEmployee object
+public override string ToString()
+{
+return string.Format( "salaried employee: {0}\n{1}: {2:C}",
+base.ToString(), "weekly salary", WeeklySalary );
+} // end method ToString
+} // end class SalariedEmployee
+
+
+Lab 17 Be sure to put each class in its own file. Add a dateHired property to the base class.
+Add one additional employee of each type to the vector. Give them each unique names and other properties.

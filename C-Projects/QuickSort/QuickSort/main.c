@@ -1,7 +1,5 @@
-//
 //  main.c
 //  QuickSort
-//
 //  Created by Mahamed Hassan on 8/27/20.
 //  Copyright © 2020 Mahamed Hassan. All rights reserved.
 //
@@ -52,7 +50,7 @@ int main()
     QuickSort(A,0,10);
     
     for (i=0; i<10; i++)
-    printf("%d",A[i]);
+    printf("%d ", A[i]);
     printf("\n");
     return 0;
 }
